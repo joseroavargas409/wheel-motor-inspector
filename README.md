@@ -4,6 +4,28 @@ Visor web de un modelo 3D representativo de wheel motor GDY106 para el proyecto 
 
 ![Vista del ensamble, revisión 03](docs/preview-revision-03.png)
 
+## Trabajo realizado y metodología
+
+Se construyó y refinó un ensamble 3D por componentes a partir de las imágenes, los videos y la investigación previa del proyecto. Las formas exteriores se contrastaron con fotografías y fotogramas; la arquitectura interna se apoyó en documentación Komatsu y la patente GE. El modelado se implementó mediante geometría procedimental en JavaScript y Three.js, con medidas y cantidades aproximadas.
+
+El proceso incluyó inventario de referencias, revisión visual de videos, contraste de variantes GDY106/GDY108, tres iteraciones del ensamble, comprobaciones geométricas y cinemáticas, revisión de los controles en navegador, exportación GLB, publicación del visor y entrega en GitHub.
+
+La [memoria del trabajo: qué se hizo, cómo, fuentes y herramientas](docs/proceso-fuentes-herramientas.md) documenta cada etapa y relaciona la evidencia con los cambios del modelo.
+
+| Herramienta | Uso en este trabajo |
+|---|---|
+| OpenAI Codex | Asistencia en investigación, programación, contraste de referencias y revisión del resultado |
+| HTML, CSS y JavaScript | Interfaz del inspector y generación de geometría |
+| Three.js r180 / WebGL 2 | Ensamble, materiales transparentes, selección, corte y renderizado 3D |
+| GLTFExporter de Three.js | Exportación del modelo a GLB |
+| Python, FFmpeg, imageio-ffmpeg y Pillow | Extracción de fotogramas y hojas de revisión de videos |
+| Node.js | Servidor local, comprobaciones y exportación reproducible |
+| Navegador integrado de Codex | Revisión visual y comprobación de controles y descargas |
+| Sites | Publicación del visor web con acceso privado |
+| Git, GitHub y PowerShell | Versionado, entrega del código, paquetes y verificación SHA-256 |
+
+Las fuentes principales son los [materiales aportados y el registro de revisión](docs/revision-03.md), los [folletos oficiales Komatsu](docs/proceso-fuentes-herramientas.md#fuentes-documentales), la [patente GE US7455616B2](https://patents.google.com/patent/US7455616B2/en) y las investigaciones previas conservadas en `dist/assets/`. La memoria distingue lo observado, lo documentado y lo reconstruido de forma ilustrativa.
+
 ## Abrir el visor
 
 La [web ya publicada](https://wheel-motor-inspector-3d.glossy-snow-8166.chatgpt.site) conserva su acceso privado. Para ejecutarlo localmente se necesita Node.js 20 o posterior y un navegador con WebGL 2:
