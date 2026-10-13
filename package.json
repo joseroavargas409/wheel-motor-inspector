@@ -1,0 +1,16 @@
+{
+  "name": "wheel-motor-inspector",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Inspector web de un modelo representativo de wheel motor GDY106",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node check.mjs",
+    "check": "node check.mjs",
+    "export:glb": "node export-model.mjs models/wheel-motor-gdy106-revision-03.glb"
+  }
+}

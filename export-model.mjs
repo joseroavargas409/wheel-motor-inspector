@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const replaceThree=s=>s.replace("from 'three'","from './dist/vendor/three.module.js'");
+fs.writeFileSync('.check-model.mjs',replaceThree(fs.readFileSync('dist/model.js','utf8')));
+fs.writeFileSync('.check-base.mjs',replaceThree(fs.readFileSync('dist/assembly-v2.js','utf8')).replace("'./model.js'","'./.check-model.mjs'"));
+fs.writeFileSync('.check-utils.mjs',replaceThree(fs.readFileSync('dist/vendor/BufferGeometryUtils.js','utf8')));
+fs.writeFileSync('.check-exporter.mjs',replaceThree(fs.readFileSync('dist/vendor/GLTFExporter.js','utf8')).replace("'./BufferGeometryUtils.js'","'./.check-utils.mjs'"));
+globalThis.FileReader=class{readAsArrayBuffer(blob){blob.arrayBuffer().then(x=>{this.result=x;this.onloadend?.();});}readAsDataURL(blob){blob.arrayBuffer().then(x=>{this.result='data:'+blob.type+';base64,'+Buffer.from(x).toString('base64');this.onloadend?.();});}};
+fs.writeFileSync('.check-assembly.mjs',replaceThree(fs.readFileSync('dist/assembly-v3.js','utf8')).replace("'./model.js'","'./.check-model.mjs'").replace("'./assembly-v2.js'","'./.check-base.mjs'"));
+const {createModel}=await import('./.check-assembly.mjs');const {GLTFExporter}=await import('./.check-exporter.mjs');const m=createModel();
+for(const p of m.parts.values())for(const mesh of p.meshes){if(mesh.userData.role==='lamination')mesh.visible=false;if(['carrierHigh','carrierLow'].includes(p.id)){mesh.material.transparent=true;mesh.material.opacity=.28;mesh.material.depthWrite=false;}if(mesh.userData.role==='separator'){mesh.material.transparent=true;mesh.material.opacity=.14;mesh.material.depthWrite=false;}if(p.shell){mesh.material.transparent=true;mesh.material.opacity=.14;mesh.material.depthWrite=false;}if(p.id==='stator'){mesh.material.transparent=true;mesh.material.opacity=.22;mesh.material.depthWrite=false;}if(p.id==='rotor'){mesh.material.transparent=true;mesh.material.opacity=.48;mesh.material.depthWrite=false;}}
+m.assembly.updateMatrixWorld(true);const data=await new GLTFExporter().parseAsync(m.assembly,{binary:true,onlyVisible:true});const dest=process.argv[2];assert.ok(dest);fs.writeFileSync(dest,Buffer.from(data));
+const b=Buffer.from(data);assert.equal(b.readUInt32LE(0),0x46546c67);assert.equal(b.readUInt32LE(4),2);assert.equal(b.readUInt32LE(8),b.length);const len=b.readUInt32LE(12);const gltf=JSON.parse(b.subarray(20,20+len).toString('utf8'));assert.ok(gltf.meshes.length>1000);assert.ok(gltf.nodes.some(n=>n.name==='Bobinados de cobre'));assert.ok(!gltf.nodes.some(n=>n.name==='Neumáticos dobles'));console.log(JSON.stringify({valid_glb:true,bytes:b.length,meshes:gltf.meshes.length,nodes:gltf.nodes.length,output:dest}));
